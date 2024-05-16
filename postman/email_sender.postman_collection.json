@@ -1,0 +1,77 @@
+{
+	"info": {
+		"_postman_id": "d7f5d713-b655-4237-9401-bf65a8f3b858",
+		"name": "Email Sender Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Generate Token",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:{{port}}/auth/token",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "{{port}}",
+					"path": [
+						"auth",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Send Email(s)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MTU4ODk0NzksImV4cCI6MTcxNTg4OTQ4OX0.IwI5bGKFF7hFmDE7nHKKn4bRIzZqXWX9Dsh9o6DOH-o",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"key\": \"task-icewarp\",\n    \"subject\": \"neco\",\n    \"email\": [\n        \"something@neco.cz\",\n        \"something@neco.cz\"\n    ],\n    \"bcc\": [\n        \"neco@email.cz\"\n    ],\n    \"body_data\": {\n        \"name\": \"pavel\",\n        \"days\": 1,\n        \"link\": {\n            \"label\": \"23\",\n            \"url\": \"https://docs.nestjs.com/techniques/serialization#transform\"\n        }\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:{{port}}/email",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "{{port}}",
+					"path": [
+						"email"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "port",
+			"value": "3000"
+		},
+		{
+			"key": "Bearer Token",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MTU4ODk0NzksImV4cCI6MTcxNTg4OTQ4OX0.IwI5bGKFF7hFmDE7nHKKn4bRIzZqXWX9Dsh9o6DOH-o"
+		}
+	]
+}
