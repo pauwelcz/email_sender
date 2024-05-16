@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { EmailModule } from './email/email.module';
 import { BullModule } from '@nestjs/bullmq';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { BullModule } from '@nestjs/bullmq';
       },
     }),
     EmailModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
