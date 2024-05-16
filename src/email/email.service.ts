@@ -8,24 +8,24 @@ import { readFileSync } from 'fs';
 export class EmailService {
   constructor(@InjectQueue('emails') private readonly emailQueue: Queue) {}
 
-  async sendEmail(body: SendEmailDto): Promise<string> {
+  async sendEmail(body: SendEmailDto): Promise<number> {
     const { body_data, delayed_send, email, key, subject } = body;
-    console.log(subject)
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    console.log('sending email');
 
-    // console.log(formattedEmailBody);
-    // const promise = [];
-    // for (let i = 0; i < 100; i++) {
-    //   promise.push(this.emailQueue.add('emails', { foo: i }));
-    // }
-
-    // await Promise.all(promise);
-
-    console.log('Hello, i am sending email');
-    return 'string';
+    const delay = this.getDelay(delayed_send);
+    await this.emailQueue.add('emails', { foo: 'bar' }, { delay });
+    console.log('Hello, i am sesfsdsnding email');
+    return delay;
   }
 
+  /**
+   * @param delayed_send
+   * @returns delay value in milliseconds
+   */
+  getDelay(delayed_send: string) {
+    return delayed_send
+      ? new Date(delayed_send).valueOf() - new Date().valueOf()
+      : 0;
+  }
   /**
    * TBD change properties for body_data
    * @param body_data
