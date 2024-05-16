@@ -1,8 +1,10 @@
 import { InjectQueue } from '@nestjs/bullmq';
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Queue } from 'bullmq';
 import { BodyData, SendEmailDto } from './dto/email.dto';
 import { readFileSync } from 'fs';
+import { cwd } from 'process';
+import { join } from 'path';
 
 @Injectable()
 export class EmailService {
@@ -12,19 +14,35 @@ export class EmailService {
     const { body_data, delayed_send, email, key, subject } = body;
 
     const delay = this.getDelay(delayed_send);
+
+    const eml = this.getEmlFile(key);
+    console.log('tjhis is eml');
+    console.log(eml);
+
     await this.emailQueue.add('emails', { foo: 'bar' }, { delay });
     console.log('Hello, i am sesfsdsnding email');
     return delay;
   }
 
   /**
+   *
+   */
+  getEmlFile(key: string) {
+    try {
+      const path = join(cwd(), `./src/email/templates/${key}.eml`);
+      const neco = readFileSync(path);
+      return neco;
+    } catch (e) {
+      throw new HttpException('File does not exists', HttpStatus.BAD_REQUEST);
+    }
+  }
+  /**
    * @param delayed_send
    * @returns delay value in milliseconds
    */
   getDelay(delayed_send: string) {
-    return delayed_send
-      ? new Date(delayed_send).valueOf() - new Date().valueOf()
-      : 0;
+    const delay = new Date(delayed_send).valueOf() - new Date().valueOf();
+    return delay > 0 ? delay : 0;
   }
   /**
    * TBD change properties for body_data
@@ -32,6 +50,7 @@ export class EmailService {
    * @returns
    */
   formatEmailBody(body_data: BodyData): string {
+    // TBD: check, if fileExists
     // console.log(body_data);
     return '';
   }
