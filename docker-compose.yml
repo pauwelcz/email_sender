@@ -1,0 +1,30 @@
+version: '3.5'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nest-application
+    environment:
+      - PORT=${PORT}
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./src:/app/src
+    depends_on:
+      - redis
+    
+
+  redis:
+    container_name: redis
+    image: 'redis:alpine'
+    ports:
+      - 6379:6379
+    volumes:
+      - redis:/data
+
+volumes:
+  redis:
+    driver: local
+      
