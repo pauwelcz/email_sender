@@ -11,8 +11,8 @@ import * as winston from 'winston';
   imports: [
     BullModule.forRoot({
       connection: {
-        host: 'redis',
-        port: 6379,
+        host: process.env.REDIS_HOST || 'redis',
+        port: parseInt(process.env.REDIS_PORT || '6379'),
       },
     }),
     WinstonModule.forRoot({
@@ -23,7 +23,7 @@ import * as winston from 'winston';
       transports: [
         new winston.transports.Console(),
         new winston.transports.File({
-          filename: 'logs/requests.log',
+          filename: `logs/${process.env.REQUEST_LOGGER_NAME || 'request'}.log`,
           level: 'info',
         }),
       ],
