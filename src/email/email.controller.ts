@@ -23,7 +23,7 @@ export class EmailController {
   @UseGuards(AuthGuard)
   @Post()
   async sendEmail(@Body() sendEmailDto: SendEmailDto) {
-    this.logger.info(`${new Date()} - Request received`);
+    this.logger.info(`Request received`);
     const delay = await this.emailsService.sendEmail(sendEmailDto);
 
     if (delay === 0) throw new HttpException('OK', HttpStatus.OK);
