@@ -1,4 +1,10 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpException,
+  HttpStatus,
+  Post,
+} from '@nestjs/common';
 import { EmailService } from './email.service';
 import { SendEmailDto } from './dto/email.dto';
 
@@ -7,8 +13,11 @@ export class EmailController {
   constructor(private readonly emailsService: EmailService) {}
 
   @Post()
-  async sendEmail(@Body() sendEmailDto: SendEmailDto): Promise<string> {
-    await this.emailsService.sendEmail(sendEmailDto);
-    return 'I am receiving email';
+  async sendEmail(@Body() sendEmailDto: SendEmailDto) {
+    const delay = await this.emailsService.sendEmail(sendEmailDto);
+
+    if (delay === 0) throw new HttpException('OK', HttpStatus.OK);
+
+    throw new HttpException('Accepted', HttpStatus.ACCEPTED);
   }
 }
