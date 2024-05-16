@@ -13,6 +13,7 @@ import {
   MinLength,
   ValidateNested,
 } from 'class-validator';
+import { IsNotOlderThanToday } from '../../validators/isNotOlderThanToday';
 
 class Link {
   @IsString()
@@ -44,10 +45,10 @@ export class SendEmailDto {
   @MinLength(1)
   subject: string;
 
-  // TBD: date format YYYY-MM-DD HH:mm
-  // TBD: date should be greater than new date (+10 seconds?)
   @IsDateString()
-  @MinDate(new Date())
+  @IsNotOlderThanToday({
+    message: `Date in 'delayed_send' older than current date: ${new Date().toISOString()}`,
+  })
   @IsOptional()
   delayed_send?: string;
 
