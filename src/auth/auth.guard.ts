@@ -5,6 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Request } from 'express';
+import { Payload } from '../types/auth';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -20,7 +21,7 @@ export class AuthGuard implements CanActivate {
       const parsedJwt = this.parseJwt(token);
       const nowUnix = new Date().valueOf();
 
-      if (nowUnix > parsedJwt['exp'] * 1000) {
+      if (nowUnix > parsedJwt.exp * 1000) {
         throw new UnauthorizedException();
       }
     } catch {
@@ -34,7 +35,7 @@ export class AuthGuard implements CanActivate {
     return type === 'Bearer' ? token : undefined;
   }
 
-  private parseJwt(token: string) {
+  private parseJwt(token: string): Payload {
     try {
       return JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
     } catch {
