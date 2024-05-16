@@ -17,7 +17,15 @@ export class AuthGuard implements CanActivate {
     if (!token) {
       throw new UnauthorizedException();
     }
-
+    try {
+      const parsedJwt = this.parseJwt(token);
+      const nowUnix = new Date().valueOf();
+      if (nowUnix > parsedJwt.exp * 1000) {
+        throw new UnauthorizedException();
+      }
+    } catch {
+      throw new UnauthorizedException();
+    }
     return true;
   }
 
