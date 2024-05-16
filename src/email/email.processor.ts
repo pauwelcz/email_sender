@@ -1,25 +1,15 @@
-import { Processor, WorkerHost } from "@nestjs/bullmq";
-import { Job } from "bullmq";
+import { OnWorkerEvent, Processor, WorkerHost } from '@nestjs/bullmq';
+import { Job } from 'bullmq';
 
 @Processor('emails')
 export class EmailProcessor extends WorkerHost {
   async process(job: Job<any>): Promise<any> {
-    console.log(job.name, job.data);
-    switch (job.name) {
-      case 'start':
-        return this.start(job);
-      case 'stop':
-        return this.stop(job);
-      default:
-        throw new Error(`Process ${job.name} not implemented`);
-    }
+    // TBD: sending email in process
+    console.log(`Sending email from job with id: ${job.id}`);
   }
 
-  async start(job: Job<any>): Promise<any> {
-    return Promise.resolve(`START ${job.id}`)
-  }
-
-  async stop(job: Job<any>): Promise<any> {
-    return Promise.resolve(`STOP ${job.id}`)
+  @OnWorkerEvent('completed')
+  onCompleted(job: Job<any>) {
+    console.log(`Email from job with id: ${job.id} sent`);
   }
 }
