@@ -15,9 +15,7 @@ export class EmailService {
 
     const delay = this.getDelay(delayed_send);
 
-    const eml = this.getEmlFile(key);
-    console.log('tjhis is eml');
-    console.log(eml);
+    // const eml = this.getEmlFile(key);
 
     await this.emailQueue.add('emails', { foo: 'bar' }, { delay });
     console.log('Hello, i am sesfsdsnding email');
