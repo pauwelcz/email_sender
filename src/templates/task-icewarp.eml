@@ -1,6 +1,6 @@
 From: IceWarp <sales@icewarp.com>
 Date: Fri, 26 Apr 2024 00:10:06 +0000
-Subject: IceWarp Cloud Trial expires in 7 days
+Subject: {{BODY_SUBJECT}}
 Message-Id: <de7bbe1a-ead0-4540-b9eb-bcba1aaa7420@mtasv.net>
 Reply-To: sales@icewarp.com
 To: tonda@icewarp.com
@@ -244,7 +244,7 @@ Content-Transfer-Encoding: quoted-printable
                                         <tbody>
                                         <tr>
                                             <td style=3D"width: 480px; padding: 22px 10px; text-align: left; border-collapse: collapse; mso-table-lspace: 0; mso-table-rspace: 0; mso-line-height-rule: exactly; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%" valign=3D"top" align=3D"left" width=3D"480">
-                                                <h1 style=3D"margin-bottom:0; font-family: Helvetica, sans-serif; font-size: 28px; font-weight: bold; line-height: 125%; letter-spacing: normal; color: #153961; text-align: center; margin-bottom: 32px;">IceWarp Cloud Trial expires<br /> in 7 days</h1>
+                                                <h1 style=3D"margin-bottom:0; font-family: Helvetica, sans-serif; font-size: 28px; font-weight: bold; line-height: 125%; letter-spacing: normal; color: #153961; text-align: center; margin-bottom: 32px;">IceWarp Cloud Trial expires<br /> in {{BODY_DAYS}} days</h1>
                                                 <p style=3D"margin-bottom:16px; font-family: Helvetica, sans-serif; font-size: 14px; font-weight: 300; line-height: 150%; letter-spacing: normal; color: #596A7C">Hi <b>{{BODY_NAME}}</b>,</p>
                                                 <p style=3D"margin-bottom:24px; font-family: Helvetica, sans-serif; font-size: 14px; font-weight: 300; line-height: 150%; letter-spacing: normal; color: #596A7C;">This is to inform you that your IceWarp Cloud Trial will expire in {{BODY_DAYS}} days. To learn how to convert it to production deployment, please <a href=3D"{{BODY_DATA_LINK_URL}}" style=3D"color: #5586FF;">{{BODY_DATA_LINK_LABEL}}</a>.</p>
                                             </td>
