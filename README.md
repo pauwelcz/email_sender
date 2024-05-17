@@ -43,16 +43,17 @@ This project is part of a technical round. Project demonstrates sending emails t
 ### Built with
 
 - Visual Studio Code
-- NestJS
+- NodeJS v18.16.0
+- NestJS 10.2.0
 - Redis
-- Docker
+- Docker 25.0.3
 - Postman
 
 ### Getting started
 
 #### Prerequisities
 
-- docker version 25.0.3
+- Docker version 25.0.3
 
 #### Installation
 
@@ -96,7 +97,62 @@ _Note:_ You can use a defined collection `postman/email_sender.postman_collectio
 
 #### Rate limiting
 
+[Throttler](https://docs.nestjs.com/security/rate-limiting) was used as prevention against brute-force attacks.
+
+Default values of variables in case of missing _THROTTLEL_TTL_ and _THROTTLEL_LIMIT_ in `.env` file are:
+
+- `ttl` (time to live in milliseconds): 10000 
+- `limit` (maximum number of requests within the ttl): 10
+
 ### Suggestions before production
+
+#### Brute-force attacks prevention
+
+  There may be a possibility of a brute-force attack(s), when large amount of reuest could be sent at once (emails to be send immediatelly).
+
+  In my opinion there are several ways to solve the problem:
+
+  1. Update rate limiting per request
+  2. Running multiple servers
+
+#### Brute-force attack with delayed_send
+
+  There may be another possibility of a brute-force attack(s), when theoretically the queue can be overwhelmed with emails to be sent later (for example year later from current date and time, when request was sent).
+
+  A **theoretical solution** could be to store emails intended for later send to the database table and their later addition into queue
+
+  Possible table (named _delayed_send_emails_ for example) structure:
+
+- id
+- eml_data
+- delayed_send - UTC datetime, when email should be sent
+- processed - column for check, if email was sent to queue
+
+**Use case scenario**
+
+1. User will send email with `delayed_send` set on **2 days later** (or with different delay) from current date
+2. **Only** emails for immediate sending or those to be sent on the same day or next day when the request was created will be in queue.
+3. In this case email from (1) will be added into table for **later processing**.
+
+There may be implemented [Cron job](https://docs.nestjs.com/techniques/task-scheduling), which will for example every midnight:
+
+1. Get emails from _delayed_send_emails_, which are needed to be processed **max for next day and are not processed yet** (or similar condition).
+2. These emails will be **added to queue** for process.
+
+
+After succesfull processed job, column _processed_ will be set to true, so cron will not take them next day.
+
+#### Configuration of rate limiting
+
+So that the application is not overloaded, a sufficient rate limit should be set or several servers should be started. I would probably determine these values based on stress tests.
+
+#### Monitoring
+
+In CloudTalk we used datadog to monitor errors or to determine which SQL queries were slow, etc. I would definitely consider to implement it.
+
+#### Better authentication
+
+In addition to checking the expiration of the token, I would also check whether the user initiating the request exists (by _email_ in password for example). In this case there should be new table in database _users_.
 
 ### Author
 
