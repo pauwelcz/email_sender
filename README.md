@@ -93,6 +93,35 @@ After successful authentication, the route sends an email with the parameters de
 
 _Note:_ You can use a defined collection `postman/email_sender.postman_collection.json` to import into Postman.
 
+For better readability, I decided to edit the "template" `taks-icewarp.hbs` file to keep as close as possible to the original email.
+
+Result is returned as JSON object (which is added also to queue) and status code. This object is not `.eml` file, but contains all necessary data for further usage.
+
+```json
+{
+    "from": "sender@bar.com",
+    "to": [
+        "something@neco.cz"
+    ],
+    "bcc": [
+        "neco@email.cz"
+    ],
+    "subject": "MY subject",
+    "text": "body_text",
+    "html": "body_html"
+}
+```
+
+_Note:_ In postman you can see also "escape characters" in `text` and `html` properties. For checking, if email body is correct, I used WYSIWYG editor.
+
+Steps:
+1. Copy text from `html` property and paste it into text field on [this page](https://www.freeformatter.com/json-escape.html)
+2. On this page click on "Unescape JSON". You should see body without escape characters.
+![alt text](image-1.png)
+3. Copy this text and paste into `index.html` file on [this page](https://onecompiler.com/html)
+4. After click on "RUN" button you should see, how your email will look.
+![alt text](image-2.png)
+
 ### Added features
 
 #### Rate limiting
