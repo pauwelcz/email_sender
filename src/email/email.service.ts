@@ -17,7 +17,19 @@ export class EmailService {
 
     // const eml = this.getEmlFile(key);
 
-    await this.emailQueue.add('emails', { foo: 'bar' }, { delay });
+    await this.emailQueue.add(
+      'emails',
+      { foo: 'bar' },
+      {
+        delay,
+        removeOnComplete: {
+          age: parseInt(process.env.BULLMQ_REMOVE_ON_COMLETE_AGE || '3600'),
+        },
+        removeOnFail: {
+          age: parseInt(process.env.BULLMQ_REMOVE_ON_FAIL_AGE || '86400'),
+        },
+      },
+    );
     return delay;
   }
 

@@ -13,8 +13,8 @@ import { APP_GUARD } from '@nestjs/core';
   imports: [
     BullModule.forRoot({
       connection: {
-        host: 'redis',
-        port: 6379,
+        host: process.env.REDIS_HOST || 'redis',
+        port: parseInt(process.env.REDIS_PORT || '6379'),
       },
     }),
     ThrottlerModule.forRoot([
@@ -31,7 +31,7 @@ import { APP_GUARD } from '@nestjs/core';
       transports: [
         new winston.transports.Console(),
         new winston.transports.File({
-          filename: `logs/${process.env.REQUEST_LOGGER_NAME || 'request'}.log`,
+          filename: `logs/${process.env.LOGGER_REQUEST_NAME || 'request'}.log`,
           level: 'info',
         }),
       ],
