@@ -38,7 +38,7 @@
 
 ## About The Project
 
-This project is part of a technical round. Project demonstrates sending emails to a queue either immediately or with a delay according to UTC date and time.
+This project is part of a technical round. Project demonstrates sending emails to a queue and processing them immediately or with a delay according to UTC date and time.
 
 ### Built with
 
@@ -93,7 +93,7 @@ After successful authentication, the route sends an email with the parameters de
 
 _Note:_ You can use a defined collection `postman/email_sender.postman_collection.json` to import into Postman.
 
-For better readability, I decided to edit the "template" `taks-icewarp.hbs` file to keep as close as possible to the original email.
+For better readability, I decided to edit the "template" `taks-icewarp.eml` file to keep as close as possible to the original email.
 
 Result is returned as JSON object (which is added also to queue) and status code. This object is not `.eml` file, but contains all necessary data for further usage.
 
