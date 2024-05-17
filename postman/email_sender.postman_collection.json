@@ -42,7 +42,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"key\": \"task-icewarp\",\n    \"subject\": \"neco\",\n    \"email\": [\n        \"something@neco.cz\",\n        \"something@neco.cz\"\n    ],\n    \"bcc\": [\n        \"neco@email.cz\"\n    ],\n    \"body_data\": {\n        \"name\": \"pavel\",\n        \"days\": 1,\n        \"link\": {\n            \"label\": \"23\",\n            \"url\": \"https://docs.nestjs.com/techniques/serialization#transform\"\n        }\n    }\n}",
+					"raw": "{\n    \"key\": \"task-icewarp\",\n    \"subject\": \"Subject\",\n    \"email\": [\n        \"email1@email.cz\",\n        \"email1@email.cz\"\n    ],\n    \"bcc\": [\n        \"email2@email.cz\"\n    ],\n    \"body_data\": {\n        \"name\": \"Pavel\",\n        \"days\": 1,\n        \"link\": {\n            \"label\": \"click here\",\n            \"url\": \"https://docs.nestjs.com/techniques/serialization#transform\"\n        }\n    }\n}",
 					"options": {
 						"raw": {
 							"language": "json"
