@@ -1,73 +1,105 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Email Sender
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li>
+      <a href="#about-the-project">About The Project</a>
+      <ul>
+        <li><a href="#built-with">Built With</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#getting-started">Getting Started</a>
+      <ul>
+        <li><a href="#prerequisites">Prerequisites</a></li>
+        <li><a href="#installation">Installation</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#project-routes">Project routes</a>
+      <ul>
+        <li><a href="#get-authtoken">GET auth/token</a></li>
+        <li><a href="#post-email">POST email</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#added-features">Added features</a>
+      <ul>
+        <li><a href="#rate-limiting">Rate limiting</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#suggestions-before-production">Suggestions before production</a>
+    </li>
+    <li><a href="#author">Author</a></li>
+  </ol>
+</details>
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## About The Project
 
-## Description
+This project is part of a technical round. Project demonstrates sending emails to a queue either immediately or with a delay according to UTC date and time.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+### Built with
 
-## Installation
+- Visual Studio Code
+- NestJS
+- Redis
+- Docker
+- Postman
 
-```bash
-$ npm install
-```
+### Getting started
 
-## Running the app
+#### Prerequisities
 
-```bash
-# development
-$ npm run start
+- docker version 25.0.3
 
-# watch mode
-$ npm run start:dev
+#### Installation
 
-# production mode
-$ npm run start:prod
-```
+1. Create `.env` file and fill it with variables (variable names are included in `.env.example` file ). 
+2. Start Docker, if you do not have it started
+3. Open terminal
+4. Run command `docker compose up --build`
 
-## Test
+After these steps you should have two containers. You can check them in Docker desktop.
+![Example of running containers](image.png)
 
-```bash
-# unit tests
-$ npm run test
+For stopping project simply press `ctrl + c` in terminal.
 
-# e2e tests
-$ npm run test:e2e
+### Project routes
 
-# test coverage
-$ npm run test:cov
-```
+#### GET auth/token
 
-## Support
+This route serves to obtain a JWT token for Bearer authentication, which is needed in another route. Expiration time depends on variable _JWT_TOKEN_EXPIRATION_TIME_ in `.env` time. In case of missing variable expiration time is set on 1 hour.
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+#### POST email
 
-## Stay in touch
+After successful authentication, the route sends an email with the parameters defined in the request body (JSON object) in `.eml` format to the queue for further processing.
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+**Body structure:**
 
-## License
+- _key_ - name of email template
+- _subject_ - email subject
+- [optional] _delayed_send_ - When filled, email sending is supposed to be postponed till specified time (UTC). When missing (or filled with date older than current date and time), email is supposed to be sent immediately. 
+- _body_data_
+   - _name_ - name of the recipient
+   - _days_ - number of days till expiration
+   - _link_ - formatted hyperlink object used in email body
+       - _label_ - label of formatted link
+       - _url_ - url
+- _email_ - array of target email addresses (duplicate emails will be removed)
+- _bcc_ - array of hidden copy email addresses (duplicate emails will be removed)
 
-Nest is [MIT licensed](LICENSE).
+_Note:_ You can use a defined collection `postman/email_sender.postman_collection.json` to import into Postman.
+
+### Added features
+
+#### Rate limiting
+
+### Suggestions before production
+
+### Author
+
+- Name: **Pavel Sedlář**
+- <a href="https://www.linkedin.com/in/pavel-sedl%C3%A1%C5%99-574039117/">LinkedIn Profile</a>
+- <a href="https://github.com/pauwelcz/email_sender">Github repository</a>
