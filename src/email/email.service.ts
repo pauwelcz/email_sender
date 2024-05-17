@@ -19,8 +19,8 @@ export class EmailService {
   constructor(@InjectQueue('emails') private readonly emailQueue: Queue) {}
 
   async sendEmail(body: SendEmailDto): Promise<{
-    object: EmlObject,
-    delay: number,
+    object: EmlObject;
+    delay: number;
   }> {
     const { delayed_send, email, key, subject, bcc } = body;
 
@@ -56,7 +56,7 @@ export class EmailService {
   /**
    *
    */
-  fillEmailBody(key: string, object: unknown, body: SendEmailDto) {
+  fillEmailBody(key: string, object: EmlObject, body: SendEmailDto) {
     try {
       const emlFile = this.getEmlFile(key);
       emlFormat.read(emlFile, (error, data) => {
@@ -64,8 +64,8 @@ export class EmailService {
           throw new BadRequestException(`File does not exists`);
         }
 
-        object['text'] = this.addVariablesFromRequestBody(data, body, 'text');
-        object['html'] = this.addVariablesFromRequestBody(data, body, 'html');
+        object.text = this.addVariablesFromRequestBody(data, body, 'text');
+        object.html = this.addVariablesFromRequestBody(data, body, 'html');
       });
     } catch (error) {
       throw new InternalServerErrorException(error);
