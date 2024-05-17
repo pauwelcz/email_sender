@@ -1,17 +1,18 @@
 import {
   Body,
   Controller,
-  HttpException,
   HttpStatus,
   Post,
   UseGuards,
   Inject,
+  Res,
 } from '@nestjs/common';
 import { EmailService } from './email.service';
 import { SendEmailDto } from './dto/email.dto';
 import { AuthGuard } from '../auth/auth.guard';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
+import { Response } from 'express';
 
 @Controller('email')
 export class EmailController {
@@ -22,12 +23,12 @@ export class EmailController {
 
   @UseGuards(AuthGuard)
   @Post()
-  async sendEmail(@Body() sendEmailDto: SendEmailDto) {
+  async sendEmail(@Body() sendEmailDto: SendEmailDto, @Res() res: Response) {
     this.logger.info(`Request received`);
-    const delay = await this.emailsService.sendEmail(sendEmailDto);
+    const data = await this.emailsService.sendEmail(sendEmailDto);
 
-    if (delay === 0) throw new HttpException('OK', HttpStatus.OK);
-
-    throw new HttpException('Accepted', HttpStatus.ACCEPTED);
+    res
+      .status(data.delay === 0 ? HttpStatus.OK : HttpStatus.ACCEPTED)
+      .json(data.object);
   }
 }

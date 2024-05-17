@@ -12,21 +12,27 @@ import { readFileSync } from 'fs';
 import { cwd } from 'process';
 import { join } from 'path';
 import * as emlFormat from 'eml-format';
+import { EmlObject } from '../types/eml';
 
 @Injectable()
 export class EmailService {
   constructor(@InjectQueue('emails') private readonly emailQueue: Queue) {}
 
-  async sendEmail(body: SendEmailDto): Promise<number> {
+  async sendEmail(body: SendEmailDto): Promise<{
+    object: EmlObject,
+    delay: number,
+  }> {
     const { delayed_send, email, key, subject, bcc } = body;
 
     const delay = this.getDelay(delayed_send);
 
-    const emlObject = {
+    const emlObject: EmlObject = {
       from: 'sender@bar.com',
       to: email,
       bcc,
       subject,
+      text: '',
+      html: '',
     };
 
     this.fillEmailBody(key, emlObject, body);
@@ -41,7 +47,10 @@ export class EmailService {
       },
     });
 
-    return delay;
+    return {
+      object: emlObject,
+      delay,
+    };
   }
 
   /**
@@ -58,8 +67,6 @@ export class EmailService {
         object['text'] = this.addVariablesFromRequestBody(data, body, 'text');
         object['html'] = this.addVariablesFromRequestBody(data, body, 'html');
       });
-
-      console.log(object['text']);
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
@@ -96,7 +103,6 @@ export class EmailService {
     replacedText = replacedText.replace('{{BODY_DATA_LINK_LABEL}}', label);
     replacedText = replacedText.replace('{{BODY_DAYS}}', days.toString());
     replacedText = replacedText.replace('{{BODY_DATA_LINK_URL}}', url);
-
     return replacedText;
   }
 
