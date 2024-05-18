@@ -9,7 +9,6 @@ import {
   IsString,
   IsUrl,
   Min,
-  MinDate,
   MinLength,
   ValidateNested,
 } from 'class-validator';
