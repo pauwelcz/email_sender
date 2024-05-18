@@ -6,7 +6,7 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Get('token')
-  async getToken(): Promise<string> {
-    return this.authService.getToken();
+  async generateNewToken(): Promise<string> {
+    return this.authService.generateNewToken();
   }
 }
