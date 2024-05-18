@@ -1,8 +1,6 @@
 import { InjectQueue } from '@nestjs/bullmq';
 import {
   BadRequestException,
-  HttpException,
-  HttpStatus,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
@@ -22,21 +20,21 @@ export class EmailService {
     object: EmlObject;
     delay: number;
   }> {
-    const { delayed_send, email, key, subject, bcc } = body;
+    const { delayed_send, key } = body;
 
     const delay = this.getDelay(delayed_send);
 
-    const emlObject: EmlObject = {
-      from: 'sender@bar.com',
-      to: email,
-      bcc,
-      subject,
-      text: '',
-      html: '',
+    const emlObject = this.getEmlObject(key, body);
+
+    await this.sendEmlObjectToQueue(emlObject, delay);
+
+    return {
+      object: emlObject,
+      delay,
     };
+  }
 
-    this.fillEmailBody(key, emlObject, body);
-
+  async sendEmlObjectToQueue(emlObject: EmlObject, delay: number) {
     await this.emailQueue.add('emails', emlObject, {
       delay,
       removeOnComplete: {
@@ -46,27 +44,32 @@ export class EmailService {
         age: parseInt(process.env.BULLMQ_REMOVE_ON_FAIL_AGE || '86400'),
       },
     });
-
-    return {
-      object: emlObject,
-      delay,
-    };
   }
 
-  /**
-   *
-   */
-  fillEmailBody(key: string, object: EmlObject, body: SendEmailDto) {
+  getEmlObject(key: string, body: SendEmailDto): EmlObject {
     try {
       const emlFile = this.getEmlFile(key);
+
+      const { email, bcc, subject } = body;
+      const emlObject: EmlObject = {
+        from: 'sender@bar.com',
+        to: email,
+        bcc,
+        subject,
+        text: '',
+        html: '',
+      };
+
       emlFormat.read(emlFile, (error, data) => {
         if (error) {
-          throw new BadRequestException(`File does not exists`);
+          new InternalServerErrorException(error);
         }
 
-        object.text = this.addVariablesFromRequestBody(data, body, 'text');
-        object.html = this.addVariablesFromRequestBody(data, body, 'html');
+        emlObject.text = this.fillIceWarpTemplate(data, body, 'text');
+        emlObject.html = this.fillIceWarpTemplate(data, body, 'html');
       });
+
+      return emlObject;
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
@@ -77,21 +80,11 @@ export class EmailService {
       const path = join(cwd(), `src/templates/${key}.eml`);
       return readFileSync(path, 'utf-8');
     } catch (e) {
-      throw new HttpException('File does not exists', HttpStatus.BAD_REQUEST);
+      throw new BadRequestException('Template does not exists');
     }
   }
-  /**
-   *
-   * @param data formatted data from JSON eml template
-   * @param body from request
-   * @param key for getting text (html or text)
-   * @returns text with replaced variables
-   */
-  addVariablesFromRequestBody(
-    data: unknown,
-    body: SendEmailDto,
-    key: string,
-  ): string {
+
+  fillIceWarpTemplate(data: unknown, body: SendEmailDto, key: string): string {
     const { body_data, subject } = body;
     const { name, link, days } = body_data;
     const { label, url } = link;
