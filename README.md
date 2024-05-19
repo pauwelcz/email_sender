@@ -132,6 +132,13 @@ Since application run in Docker container, for showing results in log file you n
 ![alt text](image-3.png)
 4. For exit run command `exit`
 
+#### Running tests
+
+1. Open terminal
+2. Run command `docker exec -it nest-application sh`
+3. Run command `npm run test`.
+4. For exit run command `exit`
+
 ### Added features
 
 #### Rate limiting
