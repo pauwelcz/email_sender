@@ -122,6 +122,16 @@ Steps:
 4. After click on "RUN" button you should see, how your email will look.
 ![alt text](image-2.png)
 
+#### Request log file view
+
+Since application run in Docker container, for showing results in log file you need to check log file in this container.
+
+1. Open terminal
+2. Run command `docker exec -it nest-application sh`
+3. Run command `cat logs/{{LOGGER_REQUEST_NAME}}.log`. You should see, that request was received with timestamp. Default value of `LOGGER_REQUEST_NAME` is `request`.
+![alt text](image-3.png)
+4. For exit run command `exit`
+
 ### Added features
 
 #### Rate limiting
