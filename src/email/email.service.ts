@@ -65,7 +65,7 @@ export class EmailService {
           new InternalServerErrorException(error);
         }
 
-        emlObject.text = this.fillIceWarpTemplate(data, body, 'kokot');
+        emlObject.text = this.fillIceWarpTemplate(data, body, 'text');
         emlObject.html = this.fillIceWarpTemplate(data, body, 'html');
       });
 
