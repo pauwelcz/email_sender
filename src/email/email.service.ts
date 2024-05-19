@@ -65,7 +65,7 @@ export class EmailService {
           new InternalServerErrorException(error);
         }
 
-        emlObject.text = this.fillIceWarpTemplate(data, body, 'text');
+        emlObject.text = this.fillIceWarpTemplate(data, body, 'kokot');
         emlObject.html = this.fillIceWarpTemplate(data, body, 'html');
       });
 
@@ -88,6 +88,10 @@ export class EmailService {
     const { body_data, subject } = body;
     const { name, link, days } = body_data;
     const { label, url } = link;
+    if (data[key] === undefined) {
+      throw new InternalServerErrorException();
+    }
+
     let replacedText: string = data[key]
       .toString()
       .replace('{{BODY_NAME}}', name);
